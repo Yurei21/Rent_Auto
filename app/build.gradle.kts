@@ -38,9 +38,15 @@ android {
         compose = true
     }
 }
-
+val navVersion = "2.7.6"
 dependencies {
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation ("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation(libs.androidx.navigation.testing)
+    val nav_version = "2.8.9"
 
+    implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

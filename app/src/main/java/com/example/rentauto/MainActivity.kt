@@ -6,11 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,17 +23,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rentauto.ui.theme.RentAutoTheme
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 
 class MainActivity : ComponentActivity() {
@@ -44,11 +41,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RentAutoTheme {
+                val navController = rememberNavController()
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Landing()
+                    NavigationGraph(navController)
                 }
             }
         }
@@ -56,7 +54,16 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Landing() {
+fun NavigationGraph(navController : NavHostController) {
+    NavHost(navController = navController, startDestination = "landing") {
+        composable("landing") { Landing(navController) }
+        composable("register") { RegisterScreen(navController) }
+        composable("login") { LoginScreen(navController) }
+    }
+}
+
+@Composable
+fun Landing(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -87,39 +94,23 @@ fun Landing() {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Button(onClick = { /* Navigate to login or next screen */ }) {
-            Text(text = "Get Started")
+        Button(onClick = { navController.navigate("register") },
+            modifier = Modifier.height(45.dp)
+            .width(320.dp)
+            .padding(4.dp)
+        ) {
+            Text(text = "Register")
+        }
+        Button(onClick = { navController.navigate("login") },
+            modifier = Modifier.height(45.dp)
+                .width(320.dp)
+                .padding(4.dp)
+        ) {
+            Text(text = "Login")
         }
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // 2x2 Grid for Features Section
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            // First Row of Features
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp), // Space between boxes
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                FeatureItem("🚗", "Wide range of vehicles")
-                FeatureItem("💳", "Secure payment options")
-            }
-
-            Spacer(modifier = Modifier.height(16.dp)) // Spacer between rows
-
-            // Second Row of Features
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp), // Space between boxes
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                FeatureItem("🕒", "24/7 Customer Support")
-                FeatureItem("📱", "Easy mobile booking")
-            }
-        }
     }
 }
 
@@ -127,35 +118,36 @@ fun Landing() {
 fun FeatureItem(icon: String, description: String) {
     Surface(
         modifier = Modifier
-            .padding(8.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .fillMaxHeight(0.45f)
-            .fillMaxWidth(0.45f),
-        color = MaterialTheme.colorScheme.primary, // Same color as the button
-        shadowElevation = 4.dp // Optional: for a bit of elevation
+            .width(150.dp)
+            .height(150.dp)
+            .clip(RoundedCornerShape(16.dp)),
+        color = MaterialTheme.colorScheme.primary,
+        shadowElevation = 4.dp
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center, // Center text inside the box
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxSize()
         ) {
-            Text(text = icon, fontSize = 24.sp)
-            Spacer(modifier = Modifier.width(12.dp))
+            Text(text = icon, fontSize = 28.sp)
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimary // Adjust text color to be readable
+                color = MaterialTheme.colorScheme.onPrimary,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
     }
+
 }
 
 @Preview(showBackground = true)
 @Composable
 fun LandingPreview() {
     RentAutoTheme {
-        Landing()
+        val navController = rememberNavController()
+        Landing(navController)
     }
 }
