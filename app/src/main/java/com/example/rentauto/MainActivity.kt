@@ -5,9 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,12 +26,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rentauto.ui.theme.RentAutoTheme
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,15 +44,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun NavigationGraph(navController : NavHostController) {
-    NavHost(navController = navController, startDestination = "landing") {
-        composable("landing") { Landing(navController) }
-        composable("register") { RegisterScreen(navController) }
-        composable("login") { LoginScreen(navController) }
     }
 }
 
@@ -113,7 +98,7 @@ fun Landing(navController: NavHostController) {
 
     }
 }
-
+/*
 @Composable
 fun FeatureItem(icon: String, description: String) {
     Surface(
@@ -140,8 +125,7 @@ fun FeatureItem(icon: String, description: String) {
             )
         }
     }
-
-}
+}*/
 
 @Preview(showBackground = true)
 @Composable
