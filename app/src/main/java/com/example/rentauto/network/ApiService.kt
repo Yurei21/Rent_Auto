@@ -13,6 +13,14 @@ data class LoginResponse(
     val message: String? = null
 )
 
+data class AdminLoginResponse(
+    val success: Boolean,
+    val admin_id: Int?,
+    val username: String?,
+    val status: String?,
+    val message: String? = null
+)
+
 data class RegisterRequest(
     val name: String,
     val email: String,
@@ -21,12 +29,10 @@ data class RegisterRequest(
     val password: String,
 )
 
-data class AdminLoginResponse(
-    val success: Boolean,
-    val admin_id: Int?,
-    val username: String?,
-    val status: String?,
-    val message: String? = null
+data class AdminRegisterRequest(
+    val username: String,
+    val email: String,
+    val password: String
 )
 
 interface ApiService {
@@ -48,4 +54,10 @@ interface ApiService {
         @Field("username") username: String,
         @Field("password") password: String
     ): AdminLoginResponse
+
+    @POST("adminRegister.php")
+    suspend fun registerAdmin(
+        @Body request: AdminRegisterRequest
+    ): AdminLoginResponse
+
 }

@@ -38,6 +38,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -71,7 +72,10 @@ fun LoginScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(300.dp)
-                .clickable {
+                .clickable (
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ){
                     clickCount++
                     if (clickCount >= 5) {
                         Toast.makeText(context, "Accessing Admin Login...", Toast.LENGTH_SHORT).show()
@@ -156,7 +160,7 @@ fun LoginScreen(navController: NavController) {
                             }
                         }
                     }
-                }, modifier = Modifier.fillMaxWidth().height(50.dp)
+                }, modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Login")
             }
@@ -167,13 +171,12 @@ fun LoginScreen(navController: NavController) {
 
 @Composable
 fun RegisterLink(navController: NavController) {
-    // Directly fetch the current theme mode
     val isDark = isSystemInDarkTheme()
 
     val mainTextColor = if (isDark) {
-        Color.White // Light color for dark mode (main text)
+        Color.White
     } else {
-        Color.Black // Dark color for light mode (main text)
+        Color.Black
     }
 
     val textColor = if (isDark) {

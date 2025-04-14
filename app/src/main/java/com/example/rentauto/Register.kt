@@ -79,7 +79,7 @@ fun RegisterScreen(navController : NavController) {
             androidx.compose.material3.OutlinedTextField(
                 value = name,
                 onValueChange = { name = it },
-                label = { Text("name") },
+                label = { Text("Name") },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -167,7 +167,6 @@ fun RegisterScreen(navController : NavController) {
                     }
                 }, modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp)
             ) {
                 Text("Register")
             }

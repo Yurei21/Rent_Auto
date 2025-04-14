@@ -2,6 +2,8 @@ package com.example.rentauto
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,6 +48,7 @@ fun AdminLoginScreen (navController: NavController) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    var clickCount by remember { mutableStateOf(0) }
     val context = LocalContext.current
     val isDark = isSystemInDarkTheme()
     val imageRes = if (isDark) R.drawable.iconlight else R.drawable.icondark
@@ -58,6 +61,17 @@ fun AdminLoginScreen (navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(300.dp)
+                .clickable (
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ){
+                    clickCount++
+                    if (clickCount >= 5) {
+                        Toast.makeText(context, "Accessing Admin Register...", Toast.LENGTH_SHORT).show()
+                        clickCount = 0 // Reset counter
+                        navController.navigate("AdminRegister")
+                    }
+                }
         )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

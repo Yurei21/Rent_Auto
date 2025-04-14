@@ -86,18 +86,19 @@ fun Landing(navController: NavHostController) {
         Spacer(modifier = Modifier.height(250.dp))
 
         Button(onClick = { navController.navigate("register") },
-            modifier = Modifier.height(60.dp)
+            modifier = Modifier
             .width(320.dp)
             .padding(4.dp)
         ) {
-            Text(text = "Register", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text(text = "Register", fontSize = 20.sp)
         }
         Button(onClick = { navController.navigate("login") },
-            modifier = Modifier.height(60.dp)
+            modifier = Modifier
+
                 .width(320.dp)
                 .padding(4.dp)
         ) {
-            Text(text = "Login", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text(text = "Login", fontSize = 20.sp)
         }
 
         Spacer(modifier = Modifier.height(32.dp))
