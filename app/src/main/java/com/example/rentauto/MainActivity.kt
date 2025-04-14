@@ -5,12 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -23,8 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.rentauto.ui.theme.RentAutoTheme
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -49,6 +53,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Landing(navController: NavHostController) {
+    val isDark = isSystemInDarkTheme()
+    val imageRes = if (isDark) R.drawable.iconlight else R.drawable.icondark
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -56,7 +62,7 @@ fun Landing(navController: NavHostController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.icon),
+            painter = painterResource(id = imageRes),
             contentDescription = "App Logo",
             contentScale = ContentScale.Fit,
             modifier = Modifier
@@ -77,21 +83,21 @@ fun Landing(navController: NavHostController) {
             style = MaterialTheme.typography.bodyMedium
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(250.dp))
 
         Button(onClick = { navController.navigate("register") },
-            modifier = Modifier.height(45.dp)
+            modifier = Modifier.height(60.dp)
             .width(320.dp)
             .padding(4.dp)
         ) {
-            Text(text = "Register")
+            Text(text = "Register", fontSize = 20.sp, fontWeight = FontWeight.Bold)
         }
         Button(onClick = { navController.navigate("login") },
-            modifier = Modifier.height(45.dp)
+            modifier = Modifier.height(60.dp)
                 .width(320.dp)
                 .padding(4.dp)
         ) {
-            Text(text = "Login")
+            Text(text = "Login", fontSize = 20.sp, fontWeight = FontWeight.Bold)
         }
 
         Spacer(modifier = Modifier.height(32.dp))

@@ -11,5 +11,7 @@ fun NavigationGraph(navController : NavHostController) {
         composable("landing") { Landing(navController) }
         composable("register") { RegisterScreen(navController) }
         composable("login") { LoginScreen(navController) }
+        composable("dashboard") { DashboardScreen(navController) }
+        composable("AdminLogin") { AdminLoginScreen(navController) }
     }
 }

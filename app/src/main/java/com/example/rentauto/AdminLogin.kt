@@ -1,7 +1,8 @@
 package com.example.rentauto
 
-
+import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,59 +11,46 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.example.rentauto.ui.theme.RentAutoTheme
-import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.navigation.NavController
-import androidx.navigation.testing.TestNavHostController
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Button
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import android.widget.Toast
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.rentauto.network.RetrofitClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.example.rentauto.network.RetrofitClient
 
 @Composable
-fun LoginScreen(navController: NavController) {
-    var email by remember { mutableStateOf("") }
-    var pass by remember { mutableStateOf("") }
+fun AdminLoginScreen (navController: NavController) {
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
-    var clickCount by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
     val isDark = isSystemInDarkTheme()
     val imageRes = if (isDark) R.drawable.iconlight else R.drawable.icondark
 
-    Box (
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Box (modifier = Modifier.fillMaxWidth()) {
         Image(
             painter = painterResource(id = imageRes),
             contentDescription = "App Logo",
@@ -70,14 +58,6 @@ fun LoginScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(300.dp)
-                .clickable {
-                    clickCount++
-                    if (clickCount >= 5) {
-                        Toast.makeText(context, "Accessing Admin Login...", Toast.LENGTH_SHORT).show()
-                        clickCount = 0 // Reset counter
-                        navController.navigate("AdminLogin")
-                    }
-            }
         )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -95,15 +75,15 @@ fun LoginScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
+                value = username,
+                onValueChange = { username = it },
                 label = { Text("Email") },
                 modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
-                value = pass,
-                onValueChange = { pass = it },
+                value = password,
+                onValueChange = { password = it },
                 label = { Text("Password") },
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = if(passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -112,7 +92,7 @@ fun LoginScreen(navController: NavController) {
                     val description = if (passwordVisible) "Hide Password" else "Show Password"
 
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(imageVector = image as ImageVector, contentDescription = description)
+                        androidx.compose.material3.Icon(imageVector = image as ImageVector, contentDescription = description)
                     }
                 }
             )
@@ -123,12 +103,12 @@ fun LoginScreen(navController: NavController) {
                 onClick = {
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
-                            val response = RetrofitClient.api.loginUser(email, pass)
+                            val response = RetrofitClient.api.loginAdmin(username, password)
                             withContext(Dispatchers.Main) {
                                 if (response.success) {
                                     Toast.makeText(
                                         context,
-                                        "Welcome ${response.name}!",
+                                        "Welcome ${response.username}!",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                     navController.navigate("dashboard")
@@ -159,48 +139,7 @@ fun LoginScreen(navController: NavController) {
             ) {
                 Text("Login")
             }
-            RegisterLink(navController)
+
         }
-    }
-}
-
-@Composable
-fun RegisterLink(navController: NavController) {
-    val annotatedText = buildAnnotatedString {
-        append("Don't have an account? ")
-
-        pushStringAnnotation(tag = "SIGNUP", annotation = "register")
-        withStyle(
-            style = SpanStyle(
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 16.sp,
-                textDecoration = TextDecoration.Underline
-            )
-        ) {
-            append("Sign up")
-        }
-        pop()
-    }
-
-    ClickableText(
-        text = annotatedText,
-        onClick = { offset ->
-            annotatedText.getStringAnnotations(tag = "SIGNUP", start = offset, end = offset)
-                .firstOrNull()?.let {
-                    navController.navigate("register")
-                }
-        }
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun LoginPreview() {
-    val context = LocalContext.current
-    val navController = TestNavHostController(context)
-    navController.setLifecycleOwner(LocalLifecycleOwner.current)
-
-    RentAutoTheme {
-        LoginScreen(navController)
     }
 }

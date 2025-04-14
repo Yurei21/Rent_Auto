@@ -21,6 +21,14 @@ data class RegisterRequest(
     val password: String,
 )
 
+data class AdminLoginResponse(
+    val success: Boolean,
+    val admin_id: Int?,
+    val username: String?,
+    val status: String?,
+    val message: String? = null
+)
+
 interface ApiService {
     @FormUrlEncoded
     @POST("login.php")
@@ -34,4 +42,10 @@ interface ApiService {
         @Body request: RegisterRequest
     ): LoginResponse
 
+    @FormUrlEncoded
+    @POST("adminLogin.php")
+    suspend fun loginAdmin(
+        @Field("username") username: String,
+        @Field("password") password: String
+    ): AdminLoginResponse
 }

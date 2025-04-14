@@ -2,6 +2,7 @@ package com.example.rentauto
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,12 +47,14 @@ fun RegisterScreen(navController : NavController) {
     var password by remember { mutableStateOf("") }
     var confPass by remember { mutableStateOf("") }
     val context = LocalContext.current
+    val isDark = isSystemInDarkTheme()
+    val imageRes = if (isDark) R.drawable.iconlight else R.drawable.icondark
 
     Box (
         modifier = Modifier.fillMaxSize()
     ) {
         Image (
-            painter = painterResource(id = R.drawable.icon),
+            painter = painterResource(id = imageRes),
             contentDescription = "App Logo",
             contentScale = ContentScale.Fit,
             modifier = Modifier.fillMaxWidth().height(300.dp)
