@@ -43,6 +43,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -166,13 +167,35 @@ fun LoginScreen(navController: NavController) {
 
 @Composable
 fun RegisterLink(navController: NavController) {
+    // Directly fetch the current theme mode
+    val isDark = isSystemInDarkTheme()
+
+    val mainTextColor = if (isDark) {
+        Color.White // Light color for dark mode (main text)
+    } else {
+        Color.Black // Dark color for light mode (main text)
+    }
+
+    val textColor = if (isDark) {
+        Color.Blue
+    } else {
+        MaterialTheme.colorScheme.primary
+    }
+
     val annotatedText = buildAnnotatedString {
-        append("Don't have an account? ")
+        withStyle(
+            style = SpanStyle(
+                color = mainTextColor,
+                fontSize = 16.sp
+            )
+        ) {
+            append("Don't have an account? ")
+        }
 
         pushStringAnnotation(tag = "SIGNUP", annotation = "register")
         withStyle(
             style = SpanStyle(
-                color = MaterialTheme.colorScheme.primary,
+                color = textColor,
                 fontSize = 16.sp,
                 textDecoration = TextDecoration.Underline
             )
@@ -192,6 +215,8 @@ fun RegisterLink(navController: NavController) {
         }
     )
 }
+
+
 
 @Preview(showBackground = true)
 @Composable

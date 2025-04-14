@@ -77,7 +77,7 @@ fun AdminLoginScreen (navController: NavController) {
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
-                label = { Text("Email") },
+                label = { Text("Username") },
                 modifier = Modifier.fillMaxWidth()
             )
 
