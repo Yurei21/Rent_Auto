@@ -14,11 +14,11 @@ fun NavigationGraph(navController : NavHostController) {
         composable("dashboard") { DashboardScreen(navController) }
         composable("AdminLogin") { AdminLoginScreen(navController) }
         composable("AdminRegister") { AdminRegisterScreen(navController) }
-        composable("AdminDashboard") { AdminDashboardScreen(navController) }
+        composable("AdminDashboard") { AdminDashboardScreen(navController = navController) }
 
-        composable("AdminDashboard") { AdminDashboardScreen(navController) }
-        composable("rental_records") { RentalRecordsScreen() }
-        composable("payment_records") { PaymentRecordsScreen() }
-        composable("return_car") { ReturnCarScreen() }
+        composable("modifyCar/{vehicleId}") { backStackEntry ->
+            val vehicleId = backStackEntry.arguments?.getString("vehicleId")?.toIntOrNull()
+            vehicleId?.let { ModifyCarScreen(navController, vehicleId = it) }
+        }
     }
 }

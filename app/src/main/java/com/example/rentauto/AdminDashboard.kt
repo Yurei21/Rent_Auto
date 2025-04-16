@@ -68,7 +68,9 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.navigation.NavController
 import com.example.rentauto.network.PaymentRecord
 import com.example.rentauto.network.RentalRecord
 import kotlinx.coroutines.CoroutineScope
@@ -111,10 +113,14 @@ fun AdminDashboardScreen(navController: NavHostController) {
                 navController = adminNavController,
                 startDestination = AdminNavItem.Home.route
             ) {
-                composable(AdminNavItem.Home.route) { ViewCarsScreen() }
+                composable(AdminNavItem.Home.route) { ViewCarsScreen(navController = navController) }
                 composable(AdminNavItem.Rentals.route) { RentalRecordsScreen() }
                 composable(AdminNavItem.Payments.route) { PaymentRecordsScreen() }
                 composable(AdminNavItem.Return.route) { ReturnCarScreen() }
+                composable("modifyCar/{vehicleId}") { backStackEntry ->
+                    val vehicleId = backStackEntry.arguments?.getString("vehicleId")?.toIntOrNull()
+                    vehicleId?.let { ModifyCarScreen(navController, vehicleId = it) }
+                }
             }
         }
     }
@@ -122,7 +128,7 @@ fun AdminDashboardScreen(navController: NavHostController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ViewCarsScreen(viewModel: VehicleViewModel = viewModel()) {
+fun ViewCarsScreen(viewModel: VehicleViewModel = viewModel(), navController: NavController) {
     val vehicles = viewModel.vehicleList
     val isLoading = viewModel.isLoading
 
@@ -165,7 +171,7 @@ fun ViewCarsScreen(viewModel: VehicleViewModel = viewModel()) {
                                     .fillMaxSize(),
                             ) {
                                 AsyncImage(
-                                    model = vehicle.car_url,
+                                    model = vehicle.carUrl,
                                     contentDescription = null,
                                     modifier = Modifier
                                         .size(150.dp)
@@ -179,11 +185,11 @@ fun ViewCarsScreen(viewModel: VehicleViewModel = viewModel()) {
                                 ) {
                                     Text("${vehicle.brand} ${vehicle.model}", style = MaterialTheme.typography.titleMedium)
                                     Text("Year: ${vehicle.year}")
-                                    Text("₱${vehicle.rent_price} /day", fontWeight = FontWeight.Bold)
-                                    Text("Status: ${vehicle.availability_status}")
+                                    Text("₱${vehicle.rentPrice} /day", fontWeight = FontWeight.Bold)
+                                    Text("Status: ${vehicle.availabilityStatus}")
                                 }
                                 Button(
-                                    onClick = { },
+                                    onClick = { navController.navigate("modifyCar/${vehicle.vehicleId}") },
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(top = 8.dp)
@@ -306,6 +312,7 @@ fun ReturnCarScreen() {
     var additionalFee by remember { mutableStateOf("") }
     var resultMessage by remember { mutableStateOf<String?>(null) }
     var isProcessing by remember { mutableStateOf(false) }
+    val fee = additionalFee.toDoubleOrNull() ?: 0.0
 
     Scaffold(
         topBar = {
@@ -368,13 +375,21 @@ fun ReturnCarScreen() {
 
                 Spacer(modifier = Modifier.height(16.dp))
 
+                if (isProcessing || !resultMessage.isNullOrBlank()) {
+                    Text(
+                        text = if (isProcessing) "Processing..." else resultMessage ?: "",
+                        fontWeight = FontWeight.Bold,
+                        color = when {
+                            resultMessage?.contains("success", ignoreCase = true) == true -> Color.Green
+                            resultMessage?.contains("failed", ignoreCase = true) == true ||
+                                    resultMessage?.contains("error", ignoreCase = true) == true -> Color.Red
+                            else -> Color.Black
+                        }
+                    )
+                }
+
             }
 
-            if (isProcessing) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            }
         }
     }
 }

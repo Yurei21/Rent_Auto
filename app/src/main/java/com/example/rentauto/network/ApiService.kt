@@ -6,6 +6,7 @@ import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 import retrofit2.http.GET
+import retrofit2.http.Query
 
 data class LoginResponse(
     val success: Boolean,
@@ -38,13 +39,13 @@ data class AdminRegisterRequest(
 )
 
 data class Vehicle(
-    val vehicle_id: Int,
-    val model: String,
-    val car_url: String,
-    val brand: String,
-    val year: Int,
-    val rent_price: Double,
-    val availability_status: String
+    @SerializedName("vehicle_id") val vehicleId: Int,
+    @SerializedName("brand") val brand: String,
+    @SerializedName("model") val model: String,
+    @SerializedName("year") val year: Int,
+    @SerializedName("rent_price") val rentPrice: Double,
+    @SerializedName("availability_status") val availabilityStatus: String,
+    @SerializedName("car_url") val carUrl: String
 )
 
 data class VehicleResponse(
@@ -92,6 +93,21 @@ data class Barcode(
     val message: String? = null
 )
 
+data class ModifyCarResponse(
+    @SerializedName("success") val success: Boolean,
+    @SerializedName("message") val message: String
+)
+
+data class SingleVehicleResponse(
+    val success: Boolean,
+    val vehicle: Vehicle?
+)
+
+data class DeleteCarResponse (
+    val success: Boolean,
+    val message: String? = null
+)
+
 interface ApiService {
     @FormUrlEncoded
     @POST("login.php")
@@ -132,4 +148,14 @@ interface ApiService {
         @Field("barcode") barcode: String,
         @Field("additionalFee") additionalFee: String
     ): Barcode
+
+    @GET("getCarById.php")
+    suspend fun getCarById(@Query("id") id: Int): SingleVehicleResponse
+
+    @POST("modifyCar.php")
+    suspend fun updateCar(@Body vehicle: Vehicle): ModifyCarResponse
+
+    @POST("deleteCar.php")
+    suspend fun deleteCar(@Body vehicleId: Map<String, Int>): DeleteCarResponse
+
 }
