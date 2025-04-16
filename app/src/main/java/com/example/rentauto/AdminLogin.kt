@@ -34,10 +34,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
+import androidx.navigation.testing.TestNavHostController
 import com.example.rentauto.network.RetrofitClient
+import com.example.rentauto.ui.theme.RentAutoTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -68,7 +72,7 @@ fun AdminLoginScreen (navController: NavController) {
                     clickCount++
                     if (clickCount >= 5) {
                         Toast.makeText(context, "Accessing Admin Register...", Toast.LENGTH_SHORT).show()
-                        clickCount = 0 // Reset counter
+                        clickCount = 0
                         navController.navigate("AdminRegister")
                     }
                 }
@@ -125,7 +129,7 @@ fun AdminLoginScreen (navController: NavController) {
                                         "Welcome ${response.username}!",
                                         Toast.LENGTH_SHORT
                                     ).show()
-                                    navController.navigate("dashboard")
+                                    navController.navigate("AdminDashboard")
                                 } else {
                                     val errorMessage = response.message ?: "Login failed"
                                     if (errorMessage.contains("Incorrect password", true)) {
@@ -155,5 +159,17 @@ fun AdminLoginScreen (navController: NavController) {
             }
 
         }
+    }
+}
+
+@Preview (showBackground = true)
+@Composable
+fun AdminLoginPreview () {
+    val context = LocalContext.current
+    val navController = TestNavHostController(context)
+    navController.setLifecycleOwner(LocalLifecycleOwner.current)
+
+    RentAutoTheme {
+        AdminLoginScreen(navController)
     }
 }

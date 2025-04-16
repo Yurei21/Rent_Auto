@@ -1,13 +1,15 @@
 package com.example.rentauto.network
 
+import com.google.gson.annotations.SerializedName
 import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
+import retrofit2.http.GET
 
 data class LoginResponse(
     val success: Boolean,
-    val user_id: Int?,
+    val userId: Int?,
     val name: String?,
     val status: String?,
     val message: String? = null
@@ -15,7 +17,7 @@ data class LoginResponse(
 
 data class AdminLoginResponse(
     val success: Boolean,
-    val admin_id: Int?,
+    val adminId: Int?,
     val username: String?,
     val status: String?,
     val message: String? = null
@@ -33,6 +35,61 @@ data class AdminRegisterRequest(
     val username: String,
     val email: String,
     val password: String
+)
+
+data class Vehicle(
+    val vehicle_id: Int,
+    val model: String,
+    val car_url: String,
+    val brand: String,
+    val year: Int,
+    val rent_price: Double,
+    val availability_status: String
+)
+
+data class VehicleResponse(
+    val success: Boolean,
+    val vehicles: List<Vehicle>
+)
+
+data class RentalRecord(
+    @SerializedName("user_name") val username: String,
+    @SerializedName("brand") val brand: String,
+    @SerializedName("model") val model: String,
+    @SerializedName("rental_start_date") val rentalStart: String,
+    @SerializedName("rental_end_date") val rentalEnd: String,
+    @SerializedName("total_cost") val totalCost: String,
+    @SerializedName("payment_status") val paymentStatus: String,
+    @SerializedName("carstatus") val carStatus: String
+)
+
+data class RentalResponse(
+    val success: Boolean,
+    val records: List<RentalRecord>?
+)
+
+data class PaymentRecord(
+    @SerializedName("payment_id") val paymentId: Int,
+    @SerializedName("rental_id") val rentalId: Int,
+    @SerializedName("amount_paid") val amountPaid: Double,
+    @SerializedName("payment_method") val paymentMethod: String,
+    @SerializedName("payment_date") val paymentDate: String,
+    @SerializedName("pay_status") val payStatus: String,
+    @SerializedName("additionalOrLate_fee") val additionalOrLateFee: Double,
+    @SerializedName("total_cost") val totalCost: Double,
+    @SerializedName("user_name") val username: String,
+    @SerializedName("vehicle_model") val vehicleModel: String,
+    @SerializedName("vehicle_brand") val vehicleBrand: String
+)
+
+data class PaymentResponse(
+    val success: Boolean,
+    val payments: List<PaymentRecord>?
+)
+
+data class Barcode(
+    val success: Boolean,
+    val message: String? = null
 )
 
 interface ApiService {
@@ -60,4 +117,19 @@ interface ApiService {
         @Body request: AdminRegisterRequest
     ): AdminLoginResponse
 
+    @GET("viewCars.php")
+    suspend fun viewCars(): VehicleResponse
+
+    @GET("getAllRecords.php")
+    suspend fun viewRentals(): RentalResponse
+
+    @GET("getAllPayments.php")
+    suspend fun viewPayments(): PaymentResponse
+
+    @FormUrlEncoded
+    @POST("returnCar.php")
+    suspend fun returnCar(
+        @Field("barcode") barcode: String,
+        @Field("additionalFee") additionalFee: String
+    ): Barcode
 }
