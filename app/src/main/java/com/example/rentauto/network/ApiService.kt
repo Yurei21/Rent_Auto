@@ -1,11 +1,15 @@
 package com.example.rentauto.network
 
 import com.google.gson.annotations.SerializedName
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 import retrofit2.http.GET
+import retrofit2.http.Part
+import retrofit2.http.PartMap
 import retrofit2.http.Query
 
 data class LoginResponse(
@@ -108,6 +112,11 @@ data class DeleteCarResponse (
     val message: String? = null
 )
 
+data class AddCarResponse (
+    val success: Boolean,
+    val message: String? = null
+)
+
 interface ApiService {
     @FormUrlEncoded
     @POST("login.php")
@@ -158,4 +167,9 @@ interface ApiService {
     @POST("deleteCar.php")
     suspend fun deleteCar(@Body vehicleId: Map<String, Int>): DeleteCarResponse
 
+    @POST("addCar.php")
+    suspend fun addCar(
+        @Part image: MultipartBody.Part,
+        @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>
+    ): AddCarResponse
 }
