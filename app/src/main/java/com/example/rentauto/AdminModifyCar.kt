@@ -43,7 +43,6 @@ import androidx.compose.ui.Alignment
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ModifyCarScreen(navController: NavController, vehicleId: Int?) {
-    val context = LocalContext.current
     var brand by remember { mutableStateOf("") }
     var model by remember { mutableStateOf("") }
     var year by remember { mutableStateOf("") }
