@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -87,7 +88,38 @@ fun AddCarScreen(navController: NavController) {
                     label = { Text("Rent Price") },
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = androidx.compose.ui.text.input.KeyboardType.Number)
                 )
-                OutlinedTextField(value = availability, onValueChange = { availability = it }, label = { Text("Availability Status") })
+                val availabilityOptions = listOf("Available", "Rented", "Under Maintenance")
+                var expanded by remember { mutableStateOf(false) }
+
+                Box {
+                    OutlinedTextField(
+                        value = availability,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Availability Status") },
+                        modifier = Modifier.fillMaxWidth(),
+                        trailingIcon = {
+                            IconButton(onClick = { expanded = true }) {
+                                Icon(Icons.Default.ArrowDropDown, contentDescription = "Dropdown")
+                            }
+                        }
+                    )
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        availabilityOptions.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(option) },
+                                onClick = {
+                                    availability = option
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+
 
                 Button(onClick = { imagePickerLauncher.launch("image/*") }) {
                     Text("Pick Image")
@@ -113,7 +145,7 @@ fun AddCarScreen(navController: NavController) {
                                 outputStream.close()
 
                                 val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-                                val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
+                                val body = MultipartBody.Part.createFormData("car_image", file.name, requestFile)
 
                                 val map = mapOf(
                                     "brand" to brand.toRequestBody("text/plain".toMediaTypeOrNull()),

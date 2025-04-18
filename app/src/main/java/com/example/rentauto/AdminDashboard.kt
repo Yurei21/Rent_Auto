@@ -121,6 +121,7 @@ fun AdminDashboardScreen(navController: NavHostController) {
                     val vehicleId = backStackEntry.arguments?.getString("vehicleId")?.toIntOrNull()
                     vehicleId?.let { ModifyCarScreen(navController, vehicleId = it) }
                 }
+                composable("AddCar" ) { AddCarScreen(navController) }
             }
         }
     }
@@ -137,7 +138,7 @@ fun ViewCarsScreen(viewModel: VehicleViewModel = viewModel(), navController: Nav
             TopAppBar(
                 title = { Text("Add or Modify Car") },
                 actions = {
-                    IconButton(onClick = { /* Handle modify action */ }) {
+                    IconButton(onClick = { navController.navigate("AddCar") }) {
                         Icon(Icons.Filled.Add, contentDescription = "Add Car")
                     }
                 }

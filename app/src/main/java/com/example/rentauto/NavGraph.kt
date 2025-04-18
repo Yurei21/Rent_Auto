@@ -15,7 +15,7 @@ fun NavigationGraph(navController : NavHostController) {
         composable("AdminLogin") { AdminLoginScreen(navController) }
         composable("AdminRegister") { AdminRegisterScreen(navController) }
         composable("AdminDashboard") { AdminDashboardScreen(navController = navController) }
-
+        composable("AddCar" ) { AddCarScreen(navController) }
         composable("modifyCar/{vehicleId}") { backStackEntry ->
             val vehicleId = backStackEntry.arguments?.getString("vehicleId")?.toIntOrNull()
             vehicleId?.let { ModifyCarScreen(navController, vehicleId = it) }
