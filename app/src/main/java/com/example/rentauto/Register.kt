@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,9 +22,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.rentauto.ui.theme.RentAutoTheme
@@ -170,8 +176,59 @@ fun RegisterScreen(navController : NavController) {
             ) {
                 Text("Register")
             }
+            LoginLink(navController)
         }
     }
+}
+
+@Composable
+fun LoginLink(navController: NavController) {
+    val isDark = isSystemInDarkTheme()
+
+    val mainTextColor = if (isDark) {
+        Color.White
+    } else {
+        Color.Black
+    }
+
+    val textColor = if (isDark) {
+        Color.Blue
+    } else {
+        MaterialTheme.colorScheme.primary
+    }
+
+    val annotatedText = buildAnnotatedString {
+        withStyle(
+            style = SpanStyle(
+                color = mainTextColor,
+                fontSize = 16.sp
+            )
+        ) {
+            append("Don't have an account? ")
+        }
+
+        pushStringAnnotation(tag = "SIGNUP", annotation = "register")
+        withStyle(
+            style = SpanStyle(
+                color = textColor,
+                fontSize = 16.sp,
+                textDecoration = TextDecoration.Underline
+            )
+        ) {
+            append("Sign up")
+        }
+        pop()
+    }
+
+    ClickableText(
+        text = annotatedText,
+        onClick = { offset ->
+            annotatedText.getStringAnnotations(tag = "SIGNUP", start = offset, end = offset)
+                .firstOrNull()?.let {
+                    navController.navigate("login")
+                }
+        }
+    )
 }
 
 

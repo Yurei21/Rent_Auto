@@ -7,7 +7,8 @@ import androidx.navigation.compose.composable
 
 @Composable
 fun NavigationGraph(navController : NavHostController) {
-    NavHost(navController = navController, startDestination = "landing") {
+    NavHost(navController = navController, startDestination = "launcher") {
+        composable("launcher") { Launcher(navController) }
         composable("landing") { Landing(navController) }
         composable("register") { RegisterScreen(navController) }
         composable("login") { LoginScreen(navController) }
@@ -19,6 +20,10 @@ fun NavigationGraph(navController : NavHostController) {
         composable("modifyCar/{vehicleId}") { backStackEntry ->
             val vehicleId = backStackEntry.arguments?.getString("vehicleId")?.toIntOrNull()
             vehicleId?.let { ModifyCarScreen(navController, vehicleId = it) }
+        }
+        composable("rentCar/{vehicleId}") { backStackEntry ->
+            val vehicleId = backStackEntry.arguments?.getString("vehicleId")?.toIntOrNull()
+            vehicleId?.let { RentScreen(navController, vehicleId = it) }
         }
     }
 }

@@ -126,37 +126,30 @@ fun LoginScreen(navController: NavController) {
 
             Button(
                 onClick = {
+                    val userPrefs = UserPreferences(context)
+                    var userid: Int?
+
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             val response = RetrofitClient.api.loginUser(email, pass)
-                            withContext(Dispatchers.Main) {
-                                if (response.success) {
-                                    Toast.makeText(
-                                        context,
-                                        "Welcome ${response.name}!",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    navController.navigate("dashboard")
-                                } else {
-                                    val errorMessage = response.message ?: "Login failed"
-                                    if (errorMessage.contains("Incorrect password", true)) {
-                                        Toast.makeText(
-                                            context,
-                                            "Incorrect password. Please try again.",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    } else {
-                                        Toast.makeText(
-                                            context,
-                                            errorMessage,
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                            userid = response.userId
+                            userPrefs.saveUser(userid)
+                            if (response.success) {
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(context, "Welcome ${response.name}!", Toast.LENGTH_SHORT).show()
+                                    navController.navigate("dashboard") {
+                                        popUpTo("login") { inclusive = true }
                                     }
+                                }
+                            } else {
+                                withContext(Dispatchers.Main) {
+                                    val errorMessage = response.message ?: "Login failed"
+                                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                                 }
                             }
                         } catch (e: Exception) {
                             withContext(Dispatchers.Main) {
-                                Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Error: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
                             }
                         }
                     }

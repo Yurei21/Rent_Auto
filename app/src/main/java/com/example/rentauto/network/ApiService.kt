@@ -15,7 +15,7 @@ import retrofit2.http.Query
 
 data class LoginResponse(
     val success: Boolean,
-    val userId: Int?,
+    @SerializedName("user_id") val userId: Int?,
     val name: String?,
     val status: String?,
     val message: String? = null
@@ -118,6 +118,58 @@ data class AddCarResponse (
     val message: String? = null
 )
 
+data class PaymentRentalRecord(
+    @SerializedName("payment_id") val paymentId: Int,
+    @SerializedName("amount_paid") val amountPaid: Double,
+    @SerializedName("payment_method") val paymentMethod: String,
+    @SerializedName("payment_date") val paymentDate: String,
+    @SerializedName("pay_status") val payStatus: String,
+    @SerializedName("additionalOrLate_fee") val additionalOrLateFee: Double,
+    @SerializedName("rental_id") val rentalId: Int,
+    @SerializedName("rental_start_date") val rentalStartDate: String,
+    @SerializedName("rental_end_date") val rentalEndDate: String,
+    @SerializedName("total_cost") val totalCost: Double,
+    @SerializedName("rental_payment_status") val rentalPaymentStatus: String,
+    @SerializedName("rental_status") val rentalStatus: String,
+    @SerializedName("carstatus") val carStatus: String,
+    @SerializedName("vehicle_model") val vehicleModel: String,
+    @SerializedName("vehicle_brand") val vehicleBrand: String
+)
+
+data class UserRecordsResponse(
+    val success: Boolean,
+    val data: List<PaymentRentalRecord>?
+)
+
+data class UserDocument(
+    @SerializedName("document_type") val documentType: String,
+    @SerializedName("document_url") val documentUrl: String?,
+    @SerializedName("local_image_path") val localImagePath: String?
+)
+
+data class UserProfile(
+    @SerializedName("user_id") val userId: Int,
+    @SerializedName("name") val name: String,
+    @SerializedName("email") val email: String,
+    @SerializedName("phone") val phone: String,
+    @SerializedName("address") val address: String?,
+    @SerializedName("status") val status: String,
+    val documents: List<UserDocument>? = null
+)
+
+data class ProfileResponse (
+    val success: Boolean,
+    val message: String?,
+    val data: UserProfile
+)
+
+data class RentResponse (
+    val success: Boolean,
+    val message: String,
+    val rentalId: Int?,
+    val barcode: Int?
+)
+
 interface ApiService {
     @FormUrlEncoded
     @POST("login.php")
@@ -174,4 +226,25 @@ interface ApiService {
         @Part image: MultipartBody.Part,
         @PartMap data: Map<String, @JvmSuppressWildcards RequestBody>
     ): AddCarResponse
+
+    @GET("getPaymentUser.php")
+    suspend fun getPaymentAndRentalRecords(
+        @Query("user_id") userId: Int
+    ): UserRecordsResponse
+
+    @GET("getUserWithDocument.php")
+    suspend fun getProfile (
+        @Query("user_id") userId: Int
+    ): ProfileResponse
+
+    @FormUrlEncoded
+    @POST("rentCar.php")
+    suspend fun rentCar(
+        @Field("user_id") userId: Int?,
+        @Field("vehicle_id") vehicleId: Int?,
+        @Field("rental_start_date") startDate: String,
+        @Field("rental_end_date") endDate: String,
+        @Field("total_cost") totalCost: Double,
+        @Field("payment_method") paymentMethod: String
+    ): RentResponse
 }

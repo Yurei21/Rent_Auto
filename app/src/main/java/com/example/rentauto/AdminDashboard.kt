@@ -501,9 +501,9 @@ fun handleBarcodeReturn(barcode: String, addFee: String, onSuccess:(String) -> U
             val response = RetrofitClient.api.returnCar(barcode, addFee)
             withContext(Dispatchers.Main) {
                 if (response.success) {
-                    onSuccess("Return successful. ${response.message}")
+                    onSuccess("Return successful.")
                 } else {
-                    onError("Return failed. ${response.message}")
+                    onError("Return failed.")
                 }
             }
         } catch (e: Exception) {
